@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "torneo")
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,10 +17,19 @@ public class Torneo {
     private String id;
     @Column
     String ubicacion;
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    Categoria categoria;
     @Column
-    @Enumerated(EnumType.STRING)
-    Tipo tipo;
+    String fechaInicio;
     @Column
+    String fechaFin;
+    @Column
+    String superficie;
+    @Column
+    Long premio;
+    @Column
+    Long entradas;
 
 
 }

@@ -1,19 +1,17 @@
 package dev.ruben.atp.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
-import lombok.Value;
 
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.EnumType.*;
 
 @Entity
+@Builder
 @Table(name = "tenistas")
 @Data @AllArgsConstructor @NoArgsConstructor
 public class Tenista {
