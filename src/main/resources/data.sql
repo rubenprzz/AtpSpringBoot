@@ -1,59 +1,54 @@
 DROP TABLE IF EXISTS tenistas;
 DROP TABLE IF EXISTS torneo;
-DROP TABLE IF EXISTS categoria;
 
 CREATE TABLE tenistas
 (
-    ranking INT PRIMARY KEY,
-    nombreCompleto VARCHAR(50) NOT NULL,
+    id bigint AUTO_INCREMENT PRIMARY KEY,
+    ranking bigint NOT NULL ,
+    nombre_completo VARCHAR(50) NOT NULL,
     pais VARCHAR(50) NOT NULL,
-    fechaNac DATE NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
     edad INT NOT NULL,
     altura DECIMAL(3, 2) NOT NULL,
     peso DECIMAL(4, 1) NOT NULL,
     fecha DATE NOT NULL,
-    mano VARCHAR(50) NOT NULL,
-    reves VARCHAR(50) NOT NULL,
+    mano VARCHAR(50) NOT NULL CHECK (mano IN ('DIESTRO', 'ZURDO')),
+    reves VARCHAR(50) NOT NULL CHECK (reves IN ('UNA_MANO', 'DOS_MANOS')),
     entrenado VARCHAR(50) NOT NULL,
-    dineroGanado INT NOT NULL,
-    bestRanking INT NOT NULL,
+    dinero_ganado DOUBLE NOT NULL,
+    best_ranking INT NOT NULL,
     wins INT NOT NULL,
     loses INT NOT NULL,
     winrate DECIMAL(4, 3) NOT NULL,
-    imagen VARCHAR(50) NOT NULL
+    imagen VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE categoria
-(
-    id INT PRIMARY KEY,
-    nombre VARCHAR(50) UNIQUE NOT NULL
-);
+
 
 CREATE TABLE torneo
 (
     id UUID PRIMARY KEY,
     ubicacion VARCHAR(255),
+    modo VARCHAR(50),
     categoria VARCHAR(50),
-    categoria_id INT,
     fechaInicio DATE,
     fechaFin DATE,
     superficie VARCHAR(50),
     premio BIGINT,
-    entradas BIGINT,
-    FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+    entradas BIGINT
 );
 
-INSERT INTO tenistas (ranking, nombreCompleto, pais, fechaNac, edad, altura, peso, fecha, mano, reves, entrenado, dineroGanado, bestRanking, wins, loses, winrate, imagen)
+
+INSERT INTO tenistas (ranking, nombre_completo, pais, fecha_nacimiento, edad, altura, peso, fecha, mano, reves, entrenado, dinero_ganado, best_ranking, wins, loses, winrate, imagen, created_at, updated_at)
 VALUES
-    (1, 'Roger Federer', 'Suiza', '1981-08-08', 42, 1.85, 85.5, '2024-04-08', 'DIESTRO', 'UNA_MANO', 'Xavier Malisse', 129002519, 1, 1083, 272, 0.799, 'roger_federer.jpg'),
-    (2, 'Rafael Nadal', 'España', '1986-06-03', 37, 1.85, 85.0, '2024-04-08', 'ZURDO', 'DOS_MANOS', 'Toni Nadal', 123825005, 1, 1002, 207, 0.829, 'rafael_nadal.jpg'),
-    (3, 'Novak Djokovic', 'Serbia', '1987-05-22', 36, 1.88, 77.0, '2024-04-08', 'DIESTRO', 'DOS_MANOS', 'Marian Vajda', 151656789, 1, 1068, 206, 0.838, 'novak_djokovic.jpg');
-INSERT INTO categoria (id,nombre) VALUES
-                                   (1,'Master 1000'),
-                                   (2,'Master 500'),
-                                   (3,'Master 250');
-INSERT INTO torneo (id, ubicacion, categoria, categoria_id, fechaInicio, fechaFin, superficie, premio, entradas)
+    (1, 'Roger Federer', 'Suiza', '1981-08-08', 42, 1.85, 85.5, '2024-04-08', 'DIESTRO', 'UNA_MANO', 'Xavier Malisse', 1233.4, 1, 1083, 272, 0.799, 'roger_federer.jpg', '2024-04-08', '2024-04-08'),
+    (2, 'Rafael Nadal', 'España', '1986-06-03', 37, 1.85, 85.0, '2024-04-08', 'ZURDO', 'DOS_MANOS', 'Toni Nadal', 123825005, 1, 1002, 207, 0.829, 'rafael_nadal.jpg', '2024-04-08', '2024-04-08'),
+    (3, 'Novak Djokovic', 'Serbia', '1987-05-22', 36, 1.88, 77.0, '2024-04-08', 'DIESTRO', 'DOS_MANOS', 'Marian Vajda', 151656789, 1, 1068, 206, 0.838, 'novak_djokovic.jpg', '2024-04-08', '2024-04-08' );
+
+INSERT INTO torneo (id, ubicacion, modo, categoria, fechaInicio, fechaFin, superficie, premio, entradas)
 VALUES
-    ('f47b1b1b-1b1b-1b1b-1b1b-1b1b1b1bab1b', 'Madrid', 'Masters 1000', 1, '2024-04-29', '2024-05-12', 'Tierra batida', 7000000, 1000),
-    ('f47b1b1b-1b1b-1b1b-1b1b-1b141b1b1b1c', 'Barcelona', 'ATP 500', 2, '2024-04-22', '2024-04-28', 'Tierra batida', 2500000, 500),
-    ('f47b1b1b-1b1b-1b1b-1b1b-1b1b5b1b1b1d', 'Estoril', 'ATP 250', 3, '2024-04-29', '2024-05-05', 'Tierra batida', 500000, 250);
+    ('c2337f93-d017-45b0-90ec-638396e4e430', 'Madrid', 'INDIVIDUAL', 'MASTER_1000',  '2024-04-29', '2024-05-12', 'Tierra batida', 7000000, 1000),
+    ('339292ff-b3f3-4421-9350-a4c47ab86d6d', 'Barcelona', 'DOBLE', 'MASTER_500', '2024-04-22', '2024-04-28', 'Tierra batida', 2500000, 500),
+    ('0131ee32-d546-43d0-b234-c0d7c33ce040', 'Estoril', 'INDIVIDUAL_DOBLE',  'MASTER_250', '2024-04-29', '2024-05-05', 'Tierra batida', 500000, 250);

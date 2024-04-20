@@ -13,12 +13,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Torneo {
-    @Id @GeneratedValue(strategy = GenerationType.UUID)
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @Column
     String ubicacion;
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
+    @Enumerated(EnumType.STRING)
+    @Column
+    Modo modo;
+    @Enumerated(EnumType.STRING)
+    @Column
     Categoria categoria;
     @Column
     String fechaInicio;

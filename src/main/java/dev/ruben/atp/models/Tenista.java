@@ -13,18 +13,23 @@ import static jakarta.persistence.EnumType.*;
 @Entity
 @Builder
 @Table(name = "tenistas")
-@Data @AllArgsConstructor @NoArgsConstructor
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Tenista {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
     private Long ranking;
-    @Column
+
+    @Column(name = "nombreCompleto")
     private String nombreCompleto;
+
+    @Column(name = "pais")
     private String pais;
-    @Column
+    @Column(name = "fecha_nacimiento")
     private String fechaNac;
     @Column
     private Long edad;
@@ -37,14 +42,14 @@ public class Tenista {
     @Column
     @Enumerated(EnumType.STRING)
     private Mano mano;
-    @Column
+    @Column(name = "reves")
     @Enumerated(EnumType.STRING)
-    private Reves tipo;
+    private Reves reves;
     @Column
     private String entrenado;
-    @Column
-    private Long dineroGanado;
-    @Column
+    @Column(name = "dinero_ganado")
+    private Double dineroGanado;
+    @Column(name = "best_ranking")
     private Long bestRanking;
     @Column
     private Double wins;
@@ -55,13 +60,11 @@ public class Tenista {
     @Column
     private String imagen;
     @CreationTimestamp
-    LocalDateTime fechaCreacion;
+    @Column(name = "created_at")
+    private LocalDateTime created;
     @UpdateTimestamp
-    LocalDateTime fechaActualizacion;
-
-
-
-
+    @Column(name = "updated_at")
+    private LocalDateTime updated;
 
 
 }

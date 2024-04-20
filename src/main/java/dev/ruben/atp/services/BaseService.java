@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public abstract class BaseService<T, ID, R extends JpaRepository<T, ID>> {
+
     @Autowired
     protected R repositorio;
 
