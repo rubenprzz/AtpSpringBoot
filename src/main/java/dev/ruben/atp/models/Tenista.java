@@ -1,6 +1,7 @@
 package dev.ruben.atp.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -55,7 +56,21 @@ public class Tenista {
     private Double wins;
     @Column
     private Double loses;
-    @Column
+
+    public Double getWinrate() {
+        if (loses != 0) {
+            winrate = (wins / (wins + loses)) * 100;
+
+        } else {
+            winrate = 100.0;
+        }
+        return (double) Math.round(winrate);
+    }
+
+
+
+    @Column(name = "winrate")
+    @DecimalMax(value = "100.00")
     private Double winrate;
     @Column
     private String imagen;
@@ -65,6 +80,8 @@ public class Tenista {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updated;
+
+
 
 
 }

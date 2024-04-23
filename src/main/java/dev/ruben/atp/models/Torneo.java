@@ -24,9 +24,9 @@ public class Torneo {
     @Enumerated(EnumType.STRING)
     @Column
     Categoria categoria;
-    @Column
+    @Column(name = "fecha_inicio")
     String fechaInicio;
-    @Column
+    @Column(name = "fecha_fin")
     String fechaFin;
     @Column
     String superficie;
