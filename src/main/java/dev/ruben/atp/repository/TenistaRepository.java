@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface TenistaRepository extends JpaRepository<Tenista,Long> {
     Page<Tenista> findTenistaByNombreCompletoIgnoreCase(String nombreCompleto, Pageable pageable);
+
 }

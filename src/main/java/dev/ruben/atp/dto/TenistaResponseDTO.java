@@ -1,10 +1,13 @@
 package dev.ruben.atp.dto;
 
 import dev.ruben.atp.models.Mano;
+import dev.ruben.atp.models.Tenista;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Builder
 @Data
@@ -28,6 +31,7 @@ public class TenistaResponseDTO {
     private Double wins;
     private Double loses;
     private Double winrate;
+    private List<Tenista> tenistaList;
 
 
 

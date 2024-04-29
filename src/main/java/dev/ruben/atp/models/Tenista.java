@@ -1,5 +1,6 @@
 package dev.ruben.atp.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import lombok.*;
@@ -7,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 
 import static jakarta.persistence.EnumType.*;
 
@@ -15,6 +18,8 @@ import static jakarta.persistence.EnumType.*;
 @Builder
 @Table(name = "tenistas")
 @Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Tenista {
@@ -30,16 +35,16 @@ public class Tenista {
 
     @Column(name = "pais")
     private String pais;
-    @Column(name = "fecha_nacimiento")
-    private String fechaNac;
     @Column
+    private LocalDate fechaNacimiento;
+    @Column(name = "edad")
     private Long edad;
     @Column
     private Double altura;
     @Column
     private Double peso;
     @Column
-    private String fecha;
+    private LocalDate fechaProfesional;
     @Column
     @Enumerated(EnumType.STRING)
     private Mano mano;
@@ -47,11 +52,15 @@ public class Tenista {
     @Enumerated(EnumType.STRING)
     private Reves reves;
     @Column
-    private String entrenado;
-    @Column(name = "dinero_ganado")
+    private String entrenador;
+    @Column
     private Double dineroGanado;
-    @Column(name = "best_ranking")
+    @Column
+
     private Long bestRanking;
+    @Enumerated(EnumType.STRING)
+    @Column
+    private Modo modo;
     @Column
     private Double wins;
     @Column
@@ -68,18 +77,38 @@ public class Tenista {
     }
 
 
-
     @Column(name = "winrate")
     @DecimalMax(value = "100.00")
     private Double winrate;
     @Column
     private String imagen;
+    @Getter
+    @Column(name = "puntos")
+    private Long puntos;
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime created;
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updated;
+
+    public Long getEdad() {
+        if(fechaNacimiento != null) {
+            return edad= (long) Period.between(fechaNacimiento, LocalDate.now()).getYears();
+        }
+        else
+            return null;
+    }
+    @ManyToOne
+    @JoinColumn(name = "torneo_id")
+    @JsonBackReference
+    private Torneo torneo;
+
+    public Tenista(Long id) {
+        this.id = id;
+    }
+
+
 
 
 
