@@ -1,0 +1,157 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > TenistaServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.ruben.atp.services</a>
+</div>
+
+<h1>Coverage Summary for Class: TenistaServiceImpl (dev.ruben.atp.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TenistaServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42,9%
+  </span>
+  <span class="absValue">
+    (3/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (8/16)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.ruben.atp.services;
+&nbsp;
+&nbsp;import dev.ruben.atp.dto.TenistaResponseDTO;
+&nbsp;import dev.ruben.atp.exceptions.TenistaNotFoundException;
+&nbsp;import dev.ruben.atp.mapper.TenistaMapper;
+&nbsp;import dev.ruben.atp.models.Tenista;
+&nbsp;import dev.ruben.atp.repository.TenistaRepository;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.domain.Specification;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.Optional;
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@Service
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;public class TenistaServiceImpl extends BaseService&lt;Tenista, Long, TenistaRepository&gt; implements TenistaService {
+&nbsp;    private final TenistaRepository repositorio;
+&nbsp;    private final TenistaMapper tenistaMapper;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Page&lt;TenistaResponseDTO&gt; findAll(Optional&lt;String&gt; nombreCompleto, Optional&lt;String&gt; pais, Optional&lt;Double&gt; altura, Optional&lt;Double&gt; peso, Pageable pageable) {
+<b class="fc">&nbsp;        Specification&lt;Tenista&gt; specNombreCompletoTenista = (root, query, criteriaBuilder) -&gt;</b>
+<b class="nc">&nbsp;                nombreCompleto.map(m -&gt; criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;nombreCompleto&quot;)), &quot;%&quot; + m.toLowerCase() + &quot;%&quot;)) // Buscamos por marca</b>
+<b class="nc">&nbsp;                        .orElseGet(() -&gt; criteriaBuilder.isTrue(criteriaBuilder.literal(true)));</b>
+<b class="fc">&nbsp;        Specification&lt;Tenista&gt; specPaisTenista = (root, query, criteriaBuilder) -&gt;</b>
+<b class="nc">&nbsp;                pais.map(m -&gt; criteriaBuilder.like(criteriaBuilder.lower(root.get(&quot;pais&quot;)), &quot;%&quot; + m.toLowerCase() + &quot;%&quot;))</b>
+<b class="nc">&nbsp;                        .orElseGet(() -&gt; criteriaBuilder.isTrue(criteriaBuilder.literal(true)));</b>
+<b class="fc">&nbsp;        Specification&lt;Tenista&gt; specAlturaTenista = (root, query, criteriaBuilder) -&gt;</b>
+<b class="nc">&nbsp;                altura.map(m -&gt; criteriaBuilder.equal(root.get(&quot;altura&quot;), m))</b>
+<b class="nc">&nbsp;                        .orElseGet(() -&gt; criteriaBuilder.isTrue(criteriaBuilder.literal(true)));</b>
+<b class="fc">&nbsp;        Specification&lt;Tenista&gt; specPesoTenista = (root, query, criteriaBuilder) -&gt;</b>
+<b class="nc">&nbsp;                peso.map(m -&gt; criteriaBuilder.equal(root.get(&quot;peso&quot;), m))</b>
+<b class="nc">&nbsp;                        .orElseGet(() -&gt; criteriaBuilder.isTrue(criteriaBuilder.literal(true)));</b>
+<b class="fc">&nbsp;        Specification&lt;Tenista&gt; tenista= Specification.where(specNombreCompletoTenista).and(specPaisTenista).and(specAlturaTenista).and(specPesoTenista);</b>
+<b class="fc">&nbsp;        return repositorio.findAll(tenista, pageable).map(tenistaMapper::toTenistaResponseDTO);</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-30 12:01</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,265 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > Participante</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.ruben.atp.models</a>
+</div>
+
+<h1>Coverage Summary for Class: Participante (dev.ruben.atp.models)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Participante</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (9/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15,1%
+  </span>
+  <span class="absValue">
+    (19/126)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47,3%
+  </span>
+  <span class="absValue">
+    (26/55)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Participante$HibernateInstantiator$H2ojSU5x</td>
+  </tr>
+  <tr>
+    <td class="name">Participante$HibernateProxy$yzNONoeX</td>
+  </tr>
+  <tr>
+    <td class="name">Participante$ParticipanteBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    69,2%
+  </span>
+  <span class="absValue">
+    (9/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15,1%
+  </span>
+  <span class="absValue">
+    (19/126)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    46,4%
+  </span>
+  <span class="absValue">
+    (26/56)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.ruben.atp.models;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonBackReference;
+&nbsp;import com.fasterxml.jackson.annotation.JsonManagedReference;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import lombok.*;
+&nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication;
+&nbsp;
+&nbsp;import java.util.UUID;
+&nbsp;
+<b class="pc">&nbsp;@Data</b>
+<b class="fc">&nbsp;@NoArgsConstructor</b>
+<b class="nc">&nbsp;@AllArgsConstructor</b>
+<b class="nc">&nbsp;@Builder</b>
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;participante&quot;)
+&nbsp;public class Participante {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<b class="fc">&nbsp;    private Long id;</b>
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;tenista_id&quot;)
+<b class="fc">&nbsp;    private Tenista tenista;</b>
+&nbsp;
+<b class="fc">&nbsp;    private String resultado;</b>
+&nbsp;
+<b class="fc">&nbsp;    private Long puntosOtorgados;</b>
+<b class="nc">&nbsp;    private Double dineroGanado;</b>
+&nbsp;
+&nbsp;
+&nbsp;    @ToString.Exclude
+&nbsp;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;torneo_id&quot;)
+<b class="fc">&nbsp;    private Torneo torneo;</b>
+&nbsp;
+&nbsp;    public void setPuntosBasedOnResult(String categoria) {
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Campeon&quot;) &amp;&amp; categoria.equals(&quot;MASTER_1000&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 1000L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Campeon&quot;) &amp;&amp; categoria.equals(&quot;MASTER_500&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 500L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Campeon&quot;) &amp;&amp; categoria.equals(&quot;MASTER_250&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 250L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Segundo&quot;) &amp;&amp; categoria.equals(&quot;MASTER_1000&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 600L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Segundo&quot;) &amp;&amp; categoria.equals(&quot;MASTER_500&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 300L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Segundo&quot;) &amp;&amp; categoria.equals(&quot;MASTER_250&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 150L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Tercero&quot;) &amp;&amp; categoria.equals(&quot;MASTER_1000&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 400L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Tercero&quot;) &amp;&amp; categoria.equals(&quot;MASTER_500&quot;)) {</b>
+<b class="nc">&nbsp;            puntosOtorgados = 200L;</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Tercero&quot;) &amp;&amp; categoria.equals(&quot;MASTER_250&quot;))</b>
+<b class="nc">&nbsp;            puntosOtorgados = 100L;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDineroGanadoBasedOnResult(String categoria) {
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Campeon&quot;) &amp;&amp; categoria.equals(&quot;MASTER_1000&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 1000000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Campeon&quot;) &amp;&amp; categoria.equals(&quot;MASTER_500&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 500000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Campeon&quot;) &amp;&amp; categoria.equals(&quot;MASTER_250&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 250000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Segundo&quot;) &amp;&amp; categoria.equals(&quot;MASTER_1000&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 600000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Segundo&quot;) &amp;&amp; categoria.equals(&quot;MASTER_500&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 300000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Segundo&quot;) &amp;&amp; categoria.equals(&quot;MASTER_250&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 100000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Tercero&quot;) &amp;&amp; categoria.equals(&quot;MASTER_1000&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 250000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Tercero&quot;) &amp;&amp; categoria.equals(&quot;MASTER_500&quot;)) {</b>
+<b class="nc">&nbsp;            this.dineroGanado = 150000 + getTenista().getDineroGanado();</b>
+<b class="nc">&nbsp;            getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (resultado.equals(&quot;Tercero&quot;) &amp;&amp; categoria.equals(&quot;MASTER_250&quot;))</b>
+<b class="nc">&nbsp;            this.dineroGanado = 100000 + getTenista().getDineroGanado();</b>
+<b class="fc">&nbsp;        getTenista().setDineroGanado(dineroGanado);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-30 12:01</div>
+</div>
+</body>
+</html>

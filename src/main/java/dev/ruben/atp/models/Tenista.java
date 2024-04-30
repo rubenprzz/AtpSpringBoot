@@ -67,15 +67,7 @@ public class Tenista {
     @Column
     private Double loses;
 
-    public Double getWinrate() {
-        if (loses != 0) {
-            winrate = (wins / (wins + loses)) * 100;
 
-        } else {
-            winrate = 100.0;
-        }
-        return (double) Math.round(winrate);
-    }
 
 
     @Column(name = "winrate")
@@ -88,14 +80,14 @@ public class Tenista {
     private Long puntos;
     @CreationTimestamp
     @Column(name = "created_at")
-    private LocalDateTime created;
+    private LocalDate created;
     @UpdateTimestamp
     @Column(name = "updated_at")
-    private LocalDateTime updated;
+    private LocalDate updated;
 
     public Long getEdad() {
         if(fechaNacimiento != null) {
-            return edad= (long) Period.between(fechaNacimiento, LocalDate.now()).getYears();
+            return edad= (long) Period.between(LocalDate.from(fechaNacimiento), LocalDate.now()).getYears();
         }
         else
             return null;
@@ -108,6 +100,7 @@ public class Tenista {
     public Tenista(Long id) {
         this.id = id;
     }
+
 
 
 

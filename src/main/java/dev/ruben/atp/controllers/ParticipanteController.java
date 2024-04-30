@@ -8,6 +8,7 @@ import dev.ruben.atp.models.Participante;
 import dev.ruben.atp.models.Tenista;
 import dev.ruben.atp.models.Torneo;
 import dev.ruben.atp.repository.ParticipanteRepository;
+import dev.ruben.atp.repository.TenistaRepository;
 import dev.ruben.atp.services.ParticipanteService;
 import dev.ruben.atp.services.TenistaService;
 import dev.ruben.atp.services.TorneoService;
@@ -30,6 +31,7 @@ public class ParticipanteController {
     private final TenistaService tenistaService;
     private final TorneoService torneoService;
     private final TorneoMapper torneoMapper;
+    private final TenistaRepository tenistaRepository;
 
     @GetMapping
     public ResponseEntity<?> getParticipantes() {
@@ -53,7 +55,7 @@ public class ParticipanteController {
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN')"+" || hasRole('ADMIN_TENISTA')")
     public ResponseEntity<?> createParticipante(@RequestBody Participante participante) {
-        Tenista tenista = tenistaService.findById(participante.getTenista().getId())
+        Tenista tenista = tenistaRepository.findById(participante.getTenista().getId())
                 .orElseThrow(() -> new RuntimeException("Tenista not found with id " + participante.getTenista().getId()));
 
         Torneo torneo = torneoService.findById(participante.getTorneo().getId())
@@ -85,6 +87,14 @@ public class ParticipanteController {
     @GetMapping("/ranking/{ranking}")
     public ResponseEntity<?> findParticipanteByTenistaRanking(@PathVariable Long ranking) {
         return ResponseEntity.ok(participacionService.findParticipanteByTenistaRanking(ranking));
+    }
+    @PutMapping
+    @PreAuthorize("hasRole('ADMIN')"+" || hasRole('ADMIN_TENISTA')")
+    public ResponseEntity<?> updateParticipante(@RequestBody Participante participante) {
+        participacionService.findById(participante.getId())
+                .orElseThrow(() -> new RuntimeException("Participante not found with id " + participante.getId()));
+        participacionService.save(participante);
+        return ResponseEntity.ok().body(participante);
     }
 
 

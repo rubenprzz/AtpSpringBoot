@@ -1,5 +1,6 @@
 package dev.ruben.atp.controllers;
 
+import dev.ruben.atp.dto.TorneoCreateDto;
 import dev.ruben.atp.dto.TorneoResponseDTO;
 import dev.ruben.atp.dto.TorneoUpdateDto;
 import dev.ruben.atp.exceptions.TorneoNotFoundException;
@@ -76,6 +77,13 @@ public class TorneoController {
         }
         throw new TorneoNotFoundException("Torneo con id " + id + " no encontrado");
 
+
+    }
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')"+" || hasRole('ADMIN_TORNEO')")
+    public ResponseEntity<TorneoResponseDTO> saveTorneo(@RequestBody TorneoCreateDto torneo) {
+        var  torneoSaved = torneoService.save(torneoMapper.toTorneo(torneo));
+        return ResponseEntity.ok(torneoMapper.toTorneoResponseDTO(torneoSaved));
 
     }
 

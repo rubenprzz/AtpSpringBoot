@@ -1,0 +1,209 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > SecurityConfiguration</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.ruben.atp.configuration</a>
+</div>
+
+<h1>Coverage Summary for Class: SecurityConfiguration (dev.ruben.atp.configuration)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SecurityConfiguration</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SecurityConfiguration$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfiguration$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfiguration$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.ruben.atp.configuration;
+&nbsp;
+&nbsp;import dev.ruben.atp.security.jwt.JwtAuthenticationFilter;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;
+&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+&nbsp;import org.springframework.security.authentication.AuthenticationProvider;
+&nbsp;import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+&nbsp;import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+&nbsp;import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+&nbsp;import org.springframework.security.core.userdetails.UserDetailsService;
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+&nbsp;
+&nbsp;import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSecurity
+&nbsp;@EnableMethodSecurity
+&nbsp;public class SecurityConfiguration {
+&nbsp;    @Autowired
+&nbsp;    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+&nbsp;    private final UserDetailsService userService;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public SecurityConfiguration (JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsService userService) {</b>
+<b class="fc">&nbsp;        this.jwtAuthenticationFilter = jwtAuthenticationFilter;</b>
+<b class="fc">&nbsp;        this.userService = userService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+<b class="fc">&nbsp;        http</b>
+<b class="fc">&nbsp;                .csrf(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;                .sessionManagement(manager -&gt; manager.sessionCreationPolicy(STATELESS))</b>
+<b class="fc">&nbsp;                .authorizeHttpRequests(authz -&gt; authz</b>
+<b class="fc">&nbsp;                        .requestMatchers(&quot;/error/**&quot;).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(&quot;/login&quot;, &quot;/oauth/**&quot;).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(&quot;/users/**&quot;).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(&quot;/participantes/**&quot;).authenticated()</b>
+<b class="fc">&nbsp;                        .requestMatchers(&quot;/torneos/**&quot;).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(&quot;/tenistas/**&quot;).permitAll()</b>
+<b class="fc">&nbsp;                        .requestMatchers(&quot;/auth/**&quot;).permitAll()</b>
+&nbsp;
+<b class="fc">&nbsp;                        .anyRequest().authenticated()).authenticationProvider(authenticationProvider()).addFilterBefore(</b>
+&nbsp;                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+&nbsp;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;        return http.build();</b>
+&nbsp;    }
+&nbsp;    @Bean
+&nbsp;    public PasswordEncoder passwordEncoder() {
+<b class="fc">&nbsp;        return new BCryptPasswordEncoder();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public AuthenticationProvider authenticationProvider() {
+<b class="fc">&nbsp;        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();</b>
+<b class="fc">&nbsp;        authProvider.setUserDetailsService(userService);</b>
+<b class="fc">&nbsp;        authProvider.setPasswordEncoder(passwordEncoder());</b>
+<b class="fc">&nbsp;        return authProvider;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Bean
+&nbsp;    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
+&nbsp;            throws Exception {
+<b class="fc">&nbsp;        return config.getAuthenticationManager();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-30 12:01</div>
+</div>
+</body>
+</html>

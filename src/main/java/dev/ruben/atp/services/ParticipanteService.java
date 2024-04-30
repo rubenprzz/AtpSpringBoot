@@ -4,6 +4,7 @@ import dev.ruben.atp.models.Participante;
 import dev.ruben.atp.models.Tenista;
 import dev.ruben.atp.models.Torneo;
 import dev.ruben.atp.repository.ParticipanteRepository;
+import dev.ruben.atp.repository.TenistaRepository;
 import jakarta.servlet.http.Part;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,9 @@ public class ParticipanteService extends BaseService<Participante,Long, Particip
     private ParticipanteService participanteService;
 
     @Autowired
-    private TenistaService tenistaService;
+    private TenistaRepository tenistaService;
+    @Autowired
+    private ParticipanteRepository repositorio;
 
     public Participante saveParticipante(Participante part) {
         Tenista tenista = tenistaService.findById(part.getTenista().getId()).orElseGet(null);

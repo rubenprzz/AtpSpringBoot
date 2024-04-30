@@ -3,6 +3,7 @@ package dev.ruben.atp.controllers;
 import dev.ruben.atp.auth.users.model.UserEntity;
 import dev.ruben.atp.dto.UserCreateDTO;
 import dev.ruben.atp.dto.UserResponseDTO;
+import dev.ruben.atp.exceptions.NewUserWithDifferentPasswordsException;
 import dev.ruben.atp.mapper.UserMapper;
 import dev.ruben.atp.services.UserEntityService;
 import dev.ruben.atp.utils.PaginationLinksUtils;
@@ -30,7 +31,7 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getUsers(Pageable pageable, HttpServletRequest request) {
+    public ResponseEntity<Page<UserResponseDTO>> getUsers(Pageable pageable, HttpServletRequest request) {
         Page<UserResponseDTO> users = userEntityService.findAll(pageable).map(userMapper::toUserResponseDTO);
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
         return ResponseEntity.ok().header("link", paginationLinksUtils.createLinkHeader(users, uriBuilder))
@@ -41,12 +42,18 @@ public class UserController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> nuevoUsuario(@RequestBody UserCreateDTO userNew) {
+        if(!userNew.getPassword().equals(userNew.getConfirmPassword())){
+            throw new NewUserWithDifferentPasswordsException();
+        }else if(userNew.getUsername().equals(userEntityService.findByUsername(userNew.getUsername()))){
+            throw new DataIntegrityViolationException(HttpStatus.BAD_REQUEST + "Ya existe un usuario con ese nombre");
+        }
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(userMapper.toUserResponseDTO(userEntityService.nuevoUsuario(userNew)));
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException(HttpStatus.BAD_REQUEST + " " + e.getMessage());
         }
+
     }
     @GetMapping("/me")
     public UserResponseDTO yo(@AuthenticationPrincipal UserEntity user){

@@ -23,6 +23,7 @@ public class TorneoResponseDTO {
     private String superficie;
     private Long premio;
     private Long entradas;
+    private Long puntos;
     private Set<Participante> participantes;
 
 

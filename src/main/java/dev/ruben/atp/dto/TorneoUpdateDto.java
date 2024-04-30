@@ -20,7 +20,6 @@ public class TorneoUpdateDto {
     private final String fechaFin;
     private final Long premio;
     private final Long entradas;
-    private final String puntos;
     private final String modo;
 
 }

@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > ParticipanteController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.ruben.atp.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: ParticipanteController (dev.ruben.atp.controllers)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ParticipanteController</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96,9%
+  </span>
+  <span class="absValue">
+    (31/32)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ParticipanteController$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    88,9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96,9%
+  </span>
+  <span class="absValue">
+    (31/32)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;
+&nbsp;package dev.ruben.atp.controllers;
+&nbsp;
+&nbsp;import dev.ruben.atp.dto.TorneoResponseDTO;
+&nbsp;import dev.ruben.atp.exceptions.CategoriaBadRequestException;
+&nbsp;import dev.ruben.atp.mapper.TorneoMapper;
+&nbsp;import dev.ruben.atp.models.Participante;
+&nbsp;import dev.ruben.atp.models.Tenista;
+&nbsp;import dev.ruben.atp.models.Torneo;
+&nbsp;import dev.ruben.atp.repository.ParticipanteRepository;
+&nbsp;import dev.ruben.atp.repository.TenistaRepository;
+&nbsp;import dev.ruben.atp.services.ParticipanteService;
+&nbsp;import dev.ruben.atp.services.TenistaService;
+&nbsp;import dev.ruben.atp.services.TorneoService;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.access.prepost.PreAuthorize;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+&nbsp;@RestController
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequestMapping(&quot;/participantes&quot;)
+&nbsp;public class ParticipanteController {
+&nbsp;
+&nbsp;    private final ParticipanteService participacionService;
+&nbsp;    private final TenistaService tenistaService;
+&nbsp;    private final TorneoService torneoService;
+&nbsp;    private final TorneoMapper torneoMapper;
+&nbsp;    private final TenistaRepository tenistaRepository;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;?&gt; getParticipantes() {
+<b class="fc">&nbsp;        return ResponseEntity.ok(participacionService.findAll());</b>
+&nbsp;    }
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;
+&nbsp;    public ResponseEntity&lt;?&gt; getParticipante(@PathVariable Long id) {
+<b class="fc">&nbsp;        return ResponseEntity.ok(participacionService.findById(id));</b>
+&nbsp;    }
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;        @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;+&quot; || hasRole(&#39;ADMIN_TENISTA&#39;)&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deleteParticipante(@PathVariable Long id) {
+<b class="fc">&nbsp;        participacionService.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(HttpStatus.NOT_FOUND +&quot;No se ha encontrado un particimante con el id: &quot; + id));</b>
+<b class="fc">&nbsp;        participacionService.deleteById(id);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping()
+&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;+&quot; || hasRole(&#39;ADMIN_TENISTA&#39;)&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; createParticipante(@RequestBody Participante participante) {
+<b class="fc">&nbsp;        Tenista tenista = tenistaRepository.findById(participante.getTenista().getId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Tenista not found with id &quot; + participante.getTenista().getId()));</b>
+&nbsp;
+<b class="fc">&nbsp;        Torneo torneo = torneoService.findById(participante.getTorneo().getId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Torneo not found with id &quot; + participante.getTorneo().getId()));</b>
+<b class="fc">&nbsp;        var categoria=torneo.getCategoria();</b>
+<b class="fc">&nbsp;        var modo=torneo.getModo().toString();</b>
+<b class="fc">&nbsp;        var modoTenista=tenista.getModo().toString();</b>
+<b class="fc">&nbsp;        if(!modo.equals(modoTenista)){</b>
+<b class="fc">&nbsp;            throw new CategoriaBadRequestException(&quot;El modo del torneo no coincide con el modo del tenista&quot;);</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        participante.setPuntosBasedOnResult(categoria.toString());</b>
+&nbsp;
+<b class="fc">&nbsp;        participante.setTenista(tenista);</b>
+<b class="fc">&nbsp;        participante.setResultado(participante.getResultado());</b>
+<b class="fc">&nbsp;        participante.getTenista().setPuntos(participante.getTenista().getPuntos()+participante.getPuntosOtorgados());</b>
+<b class="fc">&nbsp;        participante.setDineroGanadoBasedOnResult(categoria.toString());</b>
+<b class="fc">&nbsp;        participante.setTorneo(torneo);</b>
+<b class="fc">&nbsp;        participacionService.save(participante);</b>
+<b class="fc">&nbsp;        participacionService.ordenarRanking();</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.ok().body(participante);</b>
+&nbsp;    }
+&nbsp;    @GetMapping(&quot;/torneo/{idSec}&quot;)
+&nbsp;    public Page&lt;Participante&gt; findAllByTorneo(@PathVariable Long idSec, Pageable pageable) {
+<b class="nc">&nbsp;        return participacionService.findAllByTorneoIdSec(idSec, pageable);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;    @GetMapping(&quot;/ranking/{ranking}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; findParticipanteByTenistaRanking(@PathVariable Long ranking) {
+<b class="fc">&nbsp;        return ResponseEntity.ok(participacionService.findParticipanteByTenistaRanking(ranking));</b>
+&nbsp;    }
+&nbsp;    @PutMapping
+&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;+&quot; || hasRole(&#39;ADMIN_TENISTA&#39;)&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateParticipante(@RequestBody Participante participante) {
+<b class="fc">&nbsp;        participacionService.findById(participante.getId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new RuntimeException(&quot;Participante not found with id &quot; + participante.getId()));</b>
+<b class="fc">&nbsp;        participacionService.save(participante);</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().body(participante);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-30 12:01</div>
+</div>
+</body>
+</html>

@@ -33,8 +33,8 @@ public class TorneoCreateDto {
         @Enumerated
         private Categoria categoria;
         @CreatedDate
-        private LocalDateTime fechaInicio;
-        private LocalDateTime fechaFin;
+        private String fechaInicio;
+        private String fechaFin;
         @NotBlank
         @Length(min = 3, max = 50)
         private String superficie;

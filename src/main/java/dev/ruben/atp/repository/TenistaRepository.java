@@ -12,4 +12,5 @@ import java.util.List;
 @Repository
 public interface TenistaRepository extends JpaRepository<Tenista,Long>, JpaSpecificationExecutor<Tenista> {
 
+
 }

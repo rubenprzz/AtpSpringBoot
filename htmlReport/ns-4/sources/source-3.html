@@ -1,0 +1,266 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > TorneoController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.ruben.atp.controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: TorneoController (dev.ruben.atp.controllers)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TorneoController</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (6/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28,6%
+  </span>
+  <span class="absValue">
+    (12/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    51,1%
+  </span>
+  <span class="absValue">
+    (24/47)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">TorneoController$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (6/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28,6%
+  </span>
+  <span class="absValue">
+    (12/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    51,1%
+  </span>
+  <span class="absValue">
+    (24/47)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.ruben.atp.controllers;
+&nbsp;
+&nbsp;import dev.ruben.atp.dto.TorneoCreateDto;
+&nbsp;import dev.ruben.atp.dto.TorneoResponseDTO;
+&nbsp;import dev.ruben.atp.dto.TorneoUpdateDto;
+&nbsp;import dev.ruben.atp.exceptions.TorneoNotFoundException;
+&nbsp;import dev.ruben.atp.mapper.TorneoMapper;
+&nbsp;import dev.ruben.atp.models.Categoria;
+&nbsp;import dev.ruben.atp.models.Modo;
+&nbsp;import dev.ruben.atp.models.Torneo;
+&nbsp;import dev.ruben.atp.services.TorneoService;
+&nbsp;import dev.ruben.atp.utils.PaginationLinksUtils;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.web.PageableDefault;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.security.access.prepost.PreAuthorize;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import org.springframework.web.util.UriComponentsBuilder;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@RestController
+<b class="fc">&nbsp;@RequiredArgsConstructor</b>
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;@RequestMapping(&quot;/torneos&quot;)
+&nbsp;public class TorneoController {
+&nbsp;    private final TorneoService torneoService;
+&nbsp;    private final PaginationLinksUtils paginationLinksUtils;
+&nbsp;    private final TorneoMapper torneoMapper;
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    public ResponseEntity&lt;Page&lt;TorneoResponseDTO&gt;&gt; getTorneos(@PageableDefault(size = 10) Pageable pageable, HttpServletRequest request) {
+<b class="nc">&nbsp;        Page&lt;Torneo&gt; torneos = torneoService.findAll(pageable);</b>
+<b class="nc">&nbsp;        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok().header(&quot;link&quot;, paginationLinksUtils.createLinkHeader(torneos, uriComponentsBuilder))</b>
+<b class="nc">&nbsp;                .body(torneos.map(torneoMapper::toTorneoResponseDTO));</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;
+&nbsp;    public ResponseEntity&lt;Optional&lt;TorneoResponseDTO&gt;&gt; getTorneoById(@PathVariable String id) {
+&nbsp;
+<b class="fc">&nbsp;        var torneo = torneoService.findById(id);</b>
+<b class="fc">&nbsp;        if (torneo.isEmpty()) {</b>
+<b class="fc">&nbsp;            throw new TorneoNotFoundException(&quot;Torneo no encontrado &quot; + id);</b>
+&nbsp;
+&nbsp;        }
+<b class="fc">&nbsp;        return ResponseEntity.ok(torneo.map(torneoMapper::toTorneoResponseDTO));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/id/{idSec}&quot;)
+&nbsp;    public ResponseEntity&lt;Optional&lt;TorneoResponseDTO&gt;&gt; getTorneoByIdSec(@PathVariable Long idSec) {
+&nbsp;
+<b class="nc">&nbsp;        var torneo = torneoService.findTorneoByIdSec(idSec);</b>
+<b class="nc">&nbsp;        if (torneo.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new TorneoNotFoundException(&quot;Torneo no encontrado &quot; + idSec);</b>
+&nbsp;
+&nbsp;        }
+<b class="nc">&nbsp;        return ResponseEntity.ok(torneo.map(torneoMapper::toTorneoResponseDTO));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;+&quot; || hasRole(&#39;ADMIN_TORNEO&#39;)&quot;)
+&nbsp;    public ResponseEntity&lt;Void&gt; deleteTorneoById(@PathVariable String id) {
+<b class="fc">&nbsp;        var torneo = torneoService.findById(id);</b>
+<b class="pc">&nbsp;        if (torneo.isPresent()) {</b>
+<b class="fc">&nbsp;            torneoService.deleteById(id);</b>
+<b class="fc">&nbsp;            log.info(&quot;Borrando torneo con id&quot; + id);</b>
+<b class="fc">&nbsp;            return ResponseEntity.noContent().build();</b>
+&nbsp;
+&nbsp;
+&nbsp;        }
+<b class="nc">&nbsp;        throw new TorneoNotFoundException(&quot;Torneo con id &quot; + id + &quot; no encontrado&quot;);</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;    @PostMapping
+&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;+&quot; || hasRole(&#39;ADMIN_TORNEO&#39;)&quot;)
+&nbsp;    public ResponseEntity&lt;TorneoResponseDTO&gt; saveTorneo(@RequestBody TorneoCreateDto torneo) {
+<b class="fc">&nbsp;        var  torneoSaved = torneoService.save(torneoMapper.toTorneo(torneo));</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(torneoMapper.toTorneoResponseDTO(torneoSaved));</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;+&quot; || hasRole(&#39;ADMIN_TORNEO&#39;)&quot;)
+&nbsp;
+&nbsp;    public ResponseEntity&lt;TorneoResponseDTO&gt; updateTorneo(@PathVariable String id, @RequestBody TorneoUpdateDto torneoUpdateDto) {
+<b class="fc">&nbsp;        Torneo torneoActual = torneoService.findById(id).orElseThrow(() -&gt; new TorneoNotFoundException(&quot;Torneo no encontrado &quot; + id));</b>
+<b class="pc">&nbsp;        if (torneoActual == null) {</b>
+<b class="nc">&nbsp;            throw new TorneoNotFoundException(&quot;Torneo no encontrado &quot; + id);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        torneoActual.setCategoria(torneoUpdateDto.getCategoria() != null ? Categoria.valueOf(torneoUpdateDto.getCategoria()) : torneoActual.getCategoria());</b>
+<b class="pc">&nbsp;        torneoActual.setEntradas(torneoUpdateDto.getEntradas() != null ? torneoUpdateDto.getEntradas() : torneoActual.getEntradas());</b>
+<b class="pc">&nbsp;        torneoActual.setFechaInicio(torneoUpdateDto.getFechaInicio() != null ? torneoUpdateDto.getFechaInicio() : torneoActual.getFechaInicio());</b>
+<b class="pc">&nbsp;        torneoActual.setFechaFin(torneoUpdateDto.getFechaFin() != null ? torneoUpdateDto.getFechaFin() : torneoActual.getFechaFin());</b>
+<b class="pc">&nbsp;        torneoActual.setIdSec(torneoUpdateDto.getIdSec() != null ? torneoUpdateDto.getIdSec() : torneoActual.getIdSec());</b>
+<b class="pc">&nbsp;        torneoActual.setPremio(torneoUpdateDto.getPremio() != null ? torneoUpdateDto.getPremio() : torneoActual.getPremio());</b>
+<b class="pc">&nbsp;        torneoActual.setUbicacion(torneoUpdateDto.getUbicacion() != null ? torneoUpdateDto.getUbicacion() : torneoActual.getUbicacion());</b>
+<b class="pc">&nbsp;        torneoActual.setModo(torneoUpdateDto.getModo() != null ? Modo.valueOf(torneoUpdateDto.getModo()) : torneoActual.getModo());</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(torneoMapper.toTorneoResponseDTO(torneoService.save(torneoActual)));</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;    @PutMapping(&quot;/id/{idSec}&quot;)
+&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;+&quot; || hasRole(&#39;ADMIN_TORNEO&#39;)&quot;)
+&nbsp;
+&nbsp;    public ResponseEntity&lt;TorneoResponseDTO&gt; updateTorneo(@PathVariable Long idSec, @RequestBody TorneoUpdateDto torneoUpdateDto) {
+<b class="nc">&nbsp;        Torneo torneoActual = torneoService.findTorneoByIdSec(idSec).orElseThrow(() -&gt; new TorneoNotFoundException(&quot;Torneo no encontrado &quot; + idSec));</b>
+<b class="nc">&nbsp;        if (torneoActual == null) {</b>
+<b class="nc">&nbsp;            throw new TorneoNotFoundException(&quot;Torneo no encontrado &quot; + idSec);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Torneo torneoUpdated = torneoService.save(torneoMapper.toTorneo(torneoUpdateDto, torneoActual));</b>
+<b class="nc">&nbsp;        torneoActual.setCategoria(torneoUpdateDto.getCategoria() != null ? Categoria.valueOf(torneoUpdateDto.getCategoria()) : torneoActual.getCategoria());</b>
+<b class="nc">&nbsp;        torneoActual.setEntradas(torneoUpdateDto.getEntradas() != null ? torneoUpdateDto.getEntradas() : torneoActual.getEntradas());</b>
+<b class="nc">&nbsp;        torneoActual.setFechaInicio(torneoUpdateDto.getFechaInicio() != null ? torneoUpdateDto.getFechaInicio() : torneoActual.getFechaInicio());</b>
+<b class="nc">&nbsp;        torneoActual.setFechaFin(torneoUpdateDto.getFechaFin() != null ? torneoUpdateDto.getFechaFin() : torneoActual.getFechaFin());</b>
+<b class="nc">&nbsp;        torneoActual.setIdSec(torneoUpdateDto.getIdSec() != null ? torneoUpdateDto.getIdSec() : torneoActual.getIdSec());</b>
+<b class="nc">&nbsp;        torneoActual.setPremio(torneoUpdateDto.getPremio() != null ? torneoUpdateDto.getPremio() : torneoActual.getPremio());</b>
+<b class="nc">&nbsp;        torneoActual.setUbicacion(torneoUpdateDto.getUbicacion() != null ? torneoUpdateDto.getUbicacion() : torneoActual.getUbicacion());</b>
+<b class="nc">&nbsp;        torneoActual.setModo(torneoUpdateDto.getModo() != null ? Modo.valueOf(torneoUpdateDto.getModo()) : torneoActual.getModo());</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(torneoMapper.toTorneoResponseDTO(torneoService.save(torneoActual)));</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-30 12:01</div>
+</div>
+</body>
+</html>

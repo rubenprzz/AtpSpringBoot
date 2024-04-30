@@ -1,0 +1,204 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > AuthenticationServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.ruben.atp.security.jwt.services</a>
+</div>
+
+<h1>Coverage Summary for Class: AuthenticationServiceImpl (dev.ruben.atp.security.jwt.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AuthenticationServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    18,2%
+  </span>
+  <span class="absValue">
+    (6/33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.ruben.atp.security.jwt.services;
+&nbsp;
+&nbsp;import dev.ruben.atp.auth.users.model.UserEntity;
+&nbsp;import dev.ruben.atp.auth.users.model.UserRole;
+&nbsp;import dev.ruben.atp.exceptions.NewUserWithDifferentPasswordsException;
+&nbsp;import dev.ruben.atp.repository.UserEntityRepository;
+&nbsp;import dev.ruben.atp.security.jwt.models.JwtUserResponse;
+&nbsp;import dev.ruben.atp.security.jwt.models.LoginRequest;
+&nbsp;import dev.ruben.atp.security.jwt.models.SignUpRequest;
+&nbsp;import dev.ruben.atp.security.jwt.services.AuthenticationService;
+&nbsp;import dev.ruben.atp.security.jwt.services.JwtService;
+&nbsp;import lombok.extern.slf4j.Slf4j;
+&nbsp;import org.apache.coyote.BadRequestException;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.dao.DataIntegrityViolationException;
+&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+&nbsp;import org.springframework.security.authentication.BadCredentialsException;
+&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+&nbsp;import org.springframework.security.core.userdetails.User;
+&nbsp;import org.springframework.security.crypto.password.PasswordEncoder;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+&nbsp;/**
+&nbsp; * Implementación de nuestro servicio de autenticación
+&nbsp; */
+&nbsp;@Service
+<b class="fc">&nbsp;@Slf4j</b>
+&nbsp;public class AuthenticationServiceImpl implements AuthenticationService {
+&nbsp;    private final UserEntityRepository authUsersRepository;
+&nbsp;    private final PasswordEncoder passwordEncoder;
+&nbsp;    private final JwtService jwtService;
+&nbsp;    private final AuthenticationManager authenticationManager;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    public AuthenticationServiceImpl(UserEntityRepository authUsersRepository, PasswordEncoder passwordEncoder,
+<b class="fc">&nbsp;                                     JwtService jwtService, AuthenticationManager authenticationManager) {</b>
+<b class="fc">&nbsp;        this.authUsersRepository = authUsersRepository;</b>
+<b class="fc">&nbsp;        this.passwordEncoder = passwordEncoder;</b>
+<b class="fc">&nbsp;        this.jwtService = jwtService;</b>
+<b class="fc">&nbsp;        this.authenticationManager = authenticationManager;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public JwtUserResponse signUp(SignUpRequest request) {
+<b class="nc">&nbsp;        log.info(&quot;Creando usuario: {}&quot;, request);</b>
+<b class="nc">&nbsp;        if (request.getPassword().contentEquals(request.getConfirmPassword())) {</b>
+<b class="nc">&nbsp;            UserEntity user = UserEntity.builder()</b>
+<b class="nc">&nbsp;                    .username(request.getUsername())</b>
+<b class="nc">&nbsp;                    .password(passwordEncoder.encode(request.getPassword()))</b>
+<b class="nc">&nbsp;                    .email(request.getEmail())</b>
+<b class="nc">&nbsp;                    .roles(Stream.of(UserRole.USER).collect(Collectors.toSet()))</b>
+<b class="nc">&nbsp;                    .build();</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                var userStored = authUsersRepository.save(user);</b>
+<b class="nc">&nbsp;                return JwtUserResponse.builder().token(jwtService.generateToken(userStored)).build();</b>
+<b class="nc">&nbsp;            } catch (DataIntegrityViolationException ex) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;El usuario ya existe&quot;);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new NewUserWithDifferentPasswordsException();</b>
+&nbsp;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public JwtUserResponse signIn(LoginRequest request) {
+<b class="nc">&nbsp;        log.info(&quot;Autenticando usuario: {}&quot;, request);</b>
+<b class="nc">&nbsp;        authenticationManager.authenticate(</b>
+<b class="nc">&nbsp;                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));</b>
+<b class="nc">&nbsp;        var user = authUsersRepository.findByUsername(request.getUsername())</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new BadCredentialsException(&quot;Usuario o contraseña incorrectos&quot;));</b>
+<b class="nc">&nbsp;        var jwt = jwtService.generateToken(user);</b>
+<b class="nc">&nbsp;        JwtUserResponse jwtUserResponse = JwtUserResponse.builder()</b>
+<b class="nc">&nbsp;                .username(user.getUsername())</b>
+<b class="nc">&nbsp;                .roles(user.getRoles())</b>
+<b class="nc">&nbsp;                .avatar(user.getAvatar())</b>
+<b class="nc">&nbsp;                .email(user.getEmail())</b>
+<b class="nc">&nbsp;                .token(jwt)</b>
+<b class="nc">&nbsp;                .build();</b>
+&nbsp;
+<b class="nc">&nbsp;        return jwtUserResponse;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-04-30 12:01</div>
+</div>
+</body>
+</html>

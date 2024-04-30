@@ -1,10 +1,7 @@
 package dev.ruben.atp.services;
 
-import dev.ruben.atp.dto.TorneoResponseDTO;
 import dev.ruben.atp.models.Torneo;
 import dev.ruben.atp.repository.TorneoRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,6 +14,10 @@ public class TorneoService extends BaseService<Torneo, String, TorneoRepository>
         return repositorio.findTorneoByIdSec(idSec);
 
 
+    }
+    public Torneo save(Torneo torneo) {
+        torneo.setId(UUID.randomUUID().toString());
+        return torneo;
     }
 
 }

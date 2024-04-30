@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
+
 public class TenistaUpdateDTO {
 
         private final String nombreCompleto;
@@ -24,11 +26,13 @@ public class TenistaUpdateDTO {
         private final Double peso;
         private final String mano;
         private final String reves;
-        private final LocalDateTime fechaNacimiento;
-        private final LocalDateTime fechaProfesional;
+        private final LocalDate fechaNacimiento;
+        private final LocalDate fechaProfesional;
         private final Long ranking;
         private final Long bestRanking;
         private String imagen;
+
+
 
 
 

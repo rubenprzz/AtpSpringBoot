@@ -33,6 +33,16 @@ public class TenistaResponseDTO {
     private Double winrate;
     private String imagen;
 
+    public Double getWinrate() {
+        if (loses != 0) {
+            winrate = (wins / (wins + loses)) * 100;
+
+        } else {
+            winrate = 100.0;
+        }
+        return (double) Math.round(winrate);
+    }
+
 
 
 }

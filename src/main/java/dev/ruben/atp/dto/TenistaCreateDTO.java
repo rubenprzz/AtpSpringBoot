@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 
 @Data
@@ -65,20 +66,21 @@ public class TenistaCreateDTO {
 
     public Long getEdad() {
         if(fechaNacimiento != null) {
-            return edad= (long) Period.between(fechaNacimiento, LocalDate.now()).getYears();
+            return edad= (long) Period.between(LocalDate.from(fechaNacimiento), LocalDate.now()).getYears();
         }
         else
             return null;
     }
     public Double getWinrate() {
-        if (loses != 0) {
+        if (loses != null && loses != 0) {
             winrate = (double) ((wins / (wins + loses)) * 100);
-
         } else {
             winrate = 100.0;
         }
         return (double) Math.round(winrate);
     }
+
+
 
 
 }
