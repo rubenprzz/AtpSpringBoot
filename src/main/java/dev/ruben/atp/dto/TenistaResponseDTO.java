@@ -19,19 +19,19 @@ public class TenistaResponseDTO {
     private Long ranking;
     private String nombreCompleto;
     private String pais;
-    private String fechaNac;
+    private String fechaNacimiento;
     private Long edad;
     private Double altura;
     private Double peso;
     private String mano;
     private String reves;
-    private String entrenado;
+    private String entrenador;
     private Double dineroGanado;
     private Long bestRanking;
     private Double wins;
     private Double loses;
     private Double winrate;
-    private List<Tenista> tenistaList;
+    private String imagen;
 
 
 

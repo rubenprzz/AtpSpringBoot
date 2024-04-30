@@ -5,6 +5,7 @@ import dev.ruben.atp.auth.users.model.UserRole;
 import dev.ruben.atp.dto.UserCreateDTO;
 import dev.ruben.atp.dto.UserResponseDTO;
 import dev.ruben.atp.exceptions.NewUserWithDifferentPasswordsException;
+import dev.ruben.atp.mapper.UserMapper;
 import dev.ruben.atp.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -21,9 +22,12 @@ import java.util.Set;
 public class UserEntityService extends BaseService<UserEntity, Long, UserEntityRepository>{
 
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
 
-    public Optional<UserEntity> findByUsername(String username) {
-        return this.repositorio.findByUsername(username);
+    public Optional<UserResponseDTO> findByUsername(String username) {
+        var user= this.repositorio.findByUsername(username);
+        return user.map(userMapper::toUserResponseDTO);
+
     }
     public UserEntity nuevoUsuario(UserCreateDTO userCreateDTO) {
         if(!userCreateDTO.getPassword().contentEquals(userCreateDTO.getConfirmPassword())) {

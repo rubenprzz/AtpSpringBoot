@@ -9,6 +9,7 @@ CREATE TABLE user_entity
     username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     avatar VARCHAR(255),
+    email VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -41,7 +42,7 @@ CREATE TABLE tenistas
 CREATE TABLE user_entity_roles
 (
     user_entity_id BIGINT,
-    role VARCHAR(50),
+    roles VARCHAR(50),
     FOREIGN KEY (user_entity_id) REFERENCES user_entity (id)
 );
 
@@ -94,15 +95,22 @@ VALUES ('c2337f93-d017-45b0-90ec-638396e4e430', 1, 'Madrid', 'INDIVIDUAL', 'MAST
         '2024-05-05',
         'Tierra batida', 250000, 250);
 -- Inserting user data
-INSERT INTO user_entity (username, password, avatar)
-VALUES ('admin', '$2a$10$jcZAOGBj7plA3cSlfU0XGuFtCwcYp/NYQhs6X24KmqkDHoObdhFiu', 'admin_avatar.jpg'),
-       ('testuser', '$2a$10$jcZAOGBj7plA3cSlfU0XGuFtCwcYp/NYQhs6X24KmqkDHoObdhFiu', 'testuser_avatar.jpg');
+INSERT INTO user_entity (username, password, email,avatar)
+VALUES ('admin', '$2a$10$jcZAOGBj7plA3cSlfU0XGuFtCwcYp/NYQhs6X24KmqkDHoObdhFiu', 'admin@sdf.com', 'admin_avatar.jpg'),
+       ('testuser', '$2a$10$jcZAOGBj7plA3cSlfU0XGuFtCwcYp/NYQhs6X24KmqkDHoObdhFiu','user@sdf.com' , 'testuser_avatar.jpg'),
+       ('admin_torneo', '$2a$10$jcZAOGBj7plA3cSlfU0XGuFtCwcYp/NYQhs6X24KmqkDHoObdhFiu', 'admin_torneo@torneo.com', 'admin_torneo_avatar.jpg'),
+       ('admin_tenista', '$2a$10$jcZAOGBj7plA3cSlfU0XGuFtCwcYp/NYQhs6X24KmqkDHoObdhFiu', 'admin_tenista@tenisa.com', 'admin_tenista_avatar.jpg')
+       ;
 
 
-INSERT INTO user_entity_roles (user_entity_id, role)
-VALUES (1, 'ROLE_ADMIN'),
-       (1, 'ROLE_USER'),
-       (2, 'ROLE_USER');
+
+INSERT INTO user_entity_roles (user_entity_id, roles)
+VALUES (1, 'ADMIN'),
+       (1, 'USER'),
+       (3,'ADMIN_TORNEO'),
+       (4, 'ADMIN_TENISTA'),
+       (2, 'USER');
+
 
 
 

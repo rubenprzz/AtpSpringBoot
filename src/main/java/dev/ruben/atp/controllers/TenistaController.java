@@ -1,6 +1,7 @@
 package dev.ruben.atp.controllers;
 
 import dev.ruben.atp.dto.TenistaCreateDTO;
+import dev.ruben.atp.dto.TenistaResponseDTO;
 import dev.ruben.atp.dto.TenistaUpdateDTO;
 import dev.ruben.atp.exceptions.StorageBadRequest;
 import dev.ruben.atp.exceptions.StorageInternal;
@@ -15,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -49,9 +51,14 @@ public class TenistaController {
 
     @GetMapping
 
-    public ResponseEntity<?> getTenistas(@PageableDefault(size = 10) Pageable pageable, HttpServletRequest request) {
+    public ResponseEntity<?> getTenistas(@PageableDefault(size = 10) Pageable pageable, HttpServletRequest request,
+                                         @RequestParam(required = false) Optional<String> nombreCompleto,
+                                         @RequestParam(required = false) Optional<String> pais,
+                                         @RequestParam(required = false) Optional<Double> altura,
+                                         @RequestParam(required = false) Optional<Double> peso
+                                         ) {
         log.info("getTenistas");
-        Page<Tenista> tenistas = tenistaService.findAll(pageable);
+        Page<TenistaResponseDTO> tenistas = tenistaService.findAll(nombreCompleto, pais, altura, peso, PageRequest.of(pageable.getPageNumber(), pageable.getPageSize()));
         log.info("fin tenistas");
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
 
@@ -81,34 +88,35 @@ public class TenistaController {
         log.info("fin saveTenista");
         return ResponseEntity.ok(tenistaSaved);
     }
-
-    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN_TENISTA')" + "|| hasRole('ADMIN')")
-    public ResponseEntity<?> updateTenista(@PathVariable Long id, @Valid @RequestBody TenistaUpdateDTO tenista) {
+    @PutMapping("/{id}")
+
+    public ResponseEntity<TenistaResponseDTO
+            > updateTenista(@PathVariable Long id, @Valid @RequestBody TenistaUpdateDTO tenistaUpdateDTO) {
         log.info("updateTenista");
         Tenista existingTenista = tenistaService.findById(id).orElseThrow(() -> new TenistaNotFoundException("Tenista not found"));
-        if (existingTenista== null) {
+        if (existingTenista == null) {
             throw new TenistaNotFoundException("Tenista not found");
         } else {
-        Tenista tenistaUpdated = tenistaService.save(tenistaMapper.convertoToTenista(tenista, existingTenista));
-            existingTenista.setNombreCompleto(tenista.getNombreCompleto() != null ? tenista.getNombreCompleto() : existingTenista.getNombreCompleto());
-            existingTenista.setPais(tenista.getPais() != null ? tenista.getPais() : existingTenista.getPais());
-            existingTenista.setFechaNacimiento(tenista.getFechaNacimiento() != null ? LocalDate.from(tenista.getFechaNacimiento()) : existingTenista.getFechaNacimiento());
-            existingTenista.setAltura(tenista.getAltura() != null ? tenista.getAltura() : existingTenista.getAltura());
-            existingTenista.setPeso(tenista.getPeso() != null ? tenista.getPeso() : existingTenista.getPeso());
-            existingTenista.setDineroGanado(tenista.getDineroGanado() != null ? tenista.getDineroGanado() : existingTenista.getDineroGanado());
-            existingTenista.setEntrenador(tenista.getEntrenador() != null ? tenista.getEntrenador() : existingTenista.getEntrenador());
-            existingTenista.setRanking(tenista.getRanking() != null ? tenista.getRanking() : existingTenista.getRanking());
-            existingTenista.setPuntos(tenista.getPuntos() != null ? tenista.getPuntos() : existingTenista.getPuntos());
+            existingTenista.setNombreCompleto(tenistaUpdateDTO.getNombreCompleto() != null ? tenistaUpdateDTO.getNombreCompleto() : existingTenista.getNombreCompleto());
+            existingTenista.setPais(tenistaUpdateDTO.getPais() != null ? tenistaUpdateDTO.getPais() : existingTenista.getPais());
+            existingTenista.setFechaNacimiento(tenistaUpdateDTO.getFechaNacimiento() != null ? LocalDate.from(tenistaUpdateDTO.getFechaNacimiento()) : existingTenista.getFechaNacimiento());
+            existingTenista.setAltura(tenistaUpdateDTO.getAltura() != null ? tenistaUpdateDTO.getAltura() : existingTenista.getAltura());
+            existingTenista.setPeso(tenistaUpdateDTO.getPeso() != null ? tenistaUpdateDTO.getPeso() : existingTenista.getPeso());
+            existingTenista.setDineroGanado(tenistaUpdateDTO.getDineroGanado() != null ? tenistaUpdateDTO.getDineroGanado() : existingTenista.getDineroGanado());
+            existingTenista.setEntrenador(tenistaUpdateDTO.getEntrenador() != null ? tenistaUpdateDTO.getEntrenador() : existingTenista.getEntrenador());
+            existingTenista.setRanking(tenistaUpdateDTO.getRanking() != null ? tenistaUpdateDTO.getRanking() : existingTenista.getRanking());
+            existingTenista.setPuntos(tenistaUpdateDTO.getPuntos() != null ? tenistaUpdateDTO.getPuntos() : existingTenista.getPuntos());
+            existingTenista.setImagen(tenistaUpdateDTO.getImagen() != null ? tenistaUpdateDTO.getImagen() : existingTenista.getImagen());
             existingTenista.setUpdated(LocalDateTime.now());
-            return ResponseEntity.ok(tenistaService.save(existingTenista));
+            return ResponseEntity.ok(tenistaMapper.toTenistaResponseDTO(tenistaService.save(existingTenista)));
 
         }
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN_TENISTA')" + "|| hasRole('ADMIN')")
-    public ResponseEntity<?> deleteTenistaById(@RequestParam Long id) {
+    public ResponseEntity<TenistaResponseDTO> deleteTenistaById(@PathVariable @RequestParam Long id) {
         log.info("deleteTenistaById{}", id);
         var tenista = tenistaService.findById(id);
         if (tenista.isPresent()) {
@@ -120,18 +128,12 @@ public class TenistaController {
 
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 
-    public ResponseEntity<Tenista> nuevoProducto(@RequestPart("nuevo") TenistaCreateDTO nuevo,
-                                                 @RequestPart("file") MultipartFile file) {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(tenistaService.nuevoTenista(nuevo, file));
-    }
-
-    @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Tenista> updateImage(@PathVariable Long id, @RequestPart("imagen") MultipartFile imagen) {
-        log.info("Iniciando actualización de imagen mediante el endpoint PATCH para el tenista con el número: " + id);
-
+    @PatchMapping(value = "/imagen/{id}", consumes = {"*/*"})
+    @PreAuthorize("hasRole('ADMIN_TENISTA')" + "|| hasRole('ADMIN')")
+    public ResponseEntity<TenistaResponseDTO> updateImage(@PathVariable Long id, @RequestPart("file") MultipartFile imagen) {
+        log.info("Actualizando imagen del tenista con id: " + id);
         List<String> datosPermitidos = List.of("image/png", "image/jpg", "image/jpeg", "image/gif");
 
         try {

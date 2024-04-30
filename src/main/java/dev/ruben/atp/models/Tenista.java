@@ -23,6 +23,7 @@ import static jakarta.persistence.EnumType.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Tenista {
+    public static final String IMAGE_DEFAULT = "https://wallpapercave.com/wp/wp9043842.jpg";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

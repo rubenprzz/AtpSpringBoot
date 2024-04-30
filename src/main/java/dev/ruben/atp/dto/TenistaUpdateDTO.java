@@ -28,6 +28,8 @@ public class TenistaUpdateDTO {
         private final LocalDateTime fechaProfesional;
         private final Long ranking;
         private final Long bestRanking;
+        private String imagen;
+
 
 
 }

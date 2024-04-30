@@ -1,6 +1,6 @@
 package dev.ruben.atp.services;
 
-import dev.ruben.atp.controllers.StorageController;
+import dev.ruben.atp.controllers.FileUploadController;
 import dev.ruben.atp.exceptions.StorageBadRequest;
 import dev.ruben.atp.exceptions.StorageFileNotFoundException;
 import dev.ruben.atp.exceptions.StorageInternal;
@@ -26,22 +26,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 
-/**
- * Implementación de un {@link StorageService} que almacena
- * los ficheros subidos dentro del servidor donde se ha desplegado
- * la apliacación.
- * <p>
- * ESTO SE REALIZA ASÍ PARA NO HACER MÁS COMPLEJO EL EJEMPLO.
- * EN UNA APLICACIÓN EN PRODUCCIÓN POSIBLEMENTE SE UTILICE
- * UN ALMACÉN REMOTO, solo habría que cambiar la implementación de estos métodos.
- *
- * @author Equipo de desarrollo de Spring
- */
+
 @Service
 @Slf4j
 public class FileSystemStorageService implements StorageService {
 
-    // Directorio raiz de nuestro almacén de ficheros
     private final Path rootLocation;
 
 
@@ -49,45 +38,27 @@ public class FileSystemStorageService implements StorageService {
         this.rootLocation = Paths.get(path);
     }
 
-    /**
-     * Método que almacena un fichero en el almacenamiento secundario
-     *
-     * @param file fichero a almacenar
-     * @return nombre del fichero almacenado
-     * @throws StorageBadRequest si el fichero está vacío
-     * @throws StorageInternal   si hay un error al almacenar el fichero
-     * @throws StorageBadRequest si el fichero contiene caracteres no permitidos
-     */
+
     @Override
     public String store(MultipartFile file) {
-        // Lista de extensiones permitidas
         List<String> extensionAcepted = List.of("png", "jpg", "jpeg", "gif");
-        // Obtenemos el nombre del fichero
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
-        // Obtenemos la extensión del fichero
         String extension = StringUtils.getFilenameExtension(filename);
-        // Comprobamos que la extensión del fichero sea una de las permitidas
         if (!extensionAcepted.contains(extension)) {
             throw new StorageBadRequest("Extensión no permitida " + extension);
         }
-        // Obtenemos el nombre del fichero sin la extensión
         String justFilename = filename.replace("." + extension, "");
-        // Nombre del fichero almacenado aleatorio para evitar duplicados y sin espacios añadiendo al final la extensión
         String storedFilename = System.currentTimeMillis() + "_" + justFilename.replaceAll("\\s+", "") + "." + extension;
 
         try {
-            // Comprobamos que el fichero no esté vacío
             if (file.isEmpty()) {
                 throw new StorageBadRequest("Fichero vacío " + filename);
             }
-            // Comprobamos que el nombre del fichero no contenga caracteres no permitidos
             if (filename.contains("..")) {
-                // This is a security check
                 throw new StorageBadRequest(
                         "No se puede almacenar un fichero con una ruta relativa fuera del directorio actual "
                                 + filename);
             }
-            // Almacenamos el fichero
             try (InputStream inputStream = file.getInputStream()) {
                 log.info("Almacenando fichero " + filename + " como " + storedFilename);
                 Files.copy(inputStream, this.rootLocation.resolve(storedFilename),
@@ -101,15 +72,11 @@ public class FileSystemStorageService implements StorageService {
 
     }
 
-    /**
-     * Método que devuelve la ruta de todos los ficheros que hay
-     * en el almacenamiento secundario del proyecto.
-     */
+
     @Override
     public Stream<Path> loadAll() {
         log.info("Cargando todos los ficheros almacenados");
         try {
-            // Devolvemos un Stream con la ruta de todos los ficheros almacenados
             return Files.walk(this.rootLocation, 1)
                     .filter(path -> !path.equals(this.rootLocation))
                     .map(this.rootLocation::relativize);
@@ -119,10 +86,6 @@ public class FileSystemStorageService implements StorageService {
 
     }
 
-    /**
-     * Método que es capaz de cargar un fichero a partir de su nombre
-     * Devuelve un objeto de tipo Path
-     */
     @Override
     public Path load(String filename) {
         log.info("Cargando fichero " + filename);
@@ -130,10 +93,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
 
-    /**
-     * Método que es capaz de cargar un fichero a partir de su nombre
-     * Devuelve un objeto de tipo Resource
-     */
+
     @Override
     public Resource loadAsResource(String filename) {
         log.info("Cargando fichero " + filename);
@@ -151,10 +111,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
 
-    /**
-     * Método que elimina todos los ficheros del almacenamiento
-     * secundario del proyecto.
-     */
+
     @Override
     public void deleteAll() {
         log.info("Eliminando todos los ficheros almacenados");
@@ -162,9 +119,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
 
-    /**
-     * Método que inicializa el almacenamiento secundario del proyecto
-     */
+
     @Override
     public void init() {
         log.info("Inicializando almacenamiento");
@@ -195,7 +150,7 @@ public class FileSystemStorageService implements StorageService {
         log.info("Obteniendo URL del fichero " + filename);
         return MvcUriComponentsBuilder
 
-                .fromMethodName(StorageController.class, "serveFile", filename, null)
+                .fromMethodName(FileUploadController.class, "serveFile", filename, null)
                 .build().toUriString();
     }
 

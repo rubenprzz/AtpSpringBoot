@@ -1,6 +1,7 @@
 package dev.ruben.atp.mapper;
 
 import dev.ruben.atp.dto.TenistaCreateDTO;
+import dev.ruben.atp.dto.TenistaResponseDTO;
 import dev.ruben.atp.dto.TenistaUpdateDTO;
 import dev.ruben.atp.models.Tenista;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,9 @@ public class TenistaMapper {
     }
     public Tenista convertoToTenista(TenistaUpdateDTO tenistaUpdateDTO, Tenista tenista) {
         return modelMapper.map(tenistaUpdateDTO, Tenista.class);
+    }
+    public TenistaResponseDTO toTenistaResponseDTO(Tenista tenista) {
+        return modelMapper.map(tenista, TenistaResponseDTO.class);
     }
 
 }

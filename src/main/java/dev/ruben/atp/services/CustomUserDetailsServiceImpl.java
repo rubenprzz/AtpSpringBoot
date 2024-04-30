@@ -1,6 +1,11 @@
 package dev.ruben.atp.services;
 
+import dev.ruben.atp.auth.users.model.UserEntity;
+import dev.ruben.atp.dto.UserResponseDTO;
+import dev.ruben.atp.mapper.UserMapper;
+import dev.ruben.atp.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,12 +15,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
 
-    private final UserEntityService userEntityService;
-@Override
+    private final UserEntityRepository authUsersRepository;
+
+    
+
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userEntityService.findByUsername(username).orElseThrow();
+        return authUsersRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario con username " + username + " no encontrado"));
     }
-    public UserDetails loadUserById(Long id) {
-        return userEntityService.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
+
+
+
 }
